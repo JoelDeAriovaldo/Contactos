@@ -1,20 +1,53 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title> HOME </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">HOME</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <label for="file">Escolha uma imagem</label>
+      <ion-input
+        type="file"
+        formControlName="pic"
+        (change)="selImg($event)"
+        id="file"
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Nome</ion-label>
+      <ion-input
+        type="text"
+        formControlName="nome"
+        placeholder="Nome"
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Celular</ion-label>
+      <ion-input
+        type="number"
+        formControlName="celular"
+        placeholder="Celular"
+      ></ion-input>
+    </ion-item>
+
+    <ion-button
+      [disabled]="formGroup.status !=='VALID'"
+      [routerLink]="['/detalhes']"
+      color="success"
+      type="submit"
+      >Salvar</ion-button
+    >
+    <ion-button color="danger">Cancelar</ion-button>
+    <ion-button color="dark" (click)="limparDados()">Limpar</ion-button>
+  </form>
 </ion-content>

@@ -1,12 +1,83 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { StorageService } from '../storage-service.service';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
+  formGroup: any = FormGroup;
+  nome: any;
+  celular: any;
+  pic: any;
+  linkAtivo = false;
 
-  constructor() {}
+  constructor(private fb: FormBuilder, private storage: StorageService) {}
 
+  ngOnInit() {
+    this.formGroup = this.fb.group({
+      pic: [null],
+      nome: ['', Validators.required],
+      celular: ['', Validators.required],
+    });
+  }
+
+  onSubmit() {
+    let info;
+    let nome = this.formGroup.get('nome')?.value;
+    let celular = this.formGroup.get('celular')?.value;
+    let pic = this.formGroup.get('pic')?.value;
+
+    info = {
+      nome,
+      celular,
+      pic,
+    };
+
+    if (this.formGroup.status === 'VALID') {
+      this.linkAtivo = true;
+    } else {
+      alert('Preencha os campos obrigatórios!');
+    }
+
+    this.storage.armazenarDados(info);
+
+    this.storage.FormGroup = info;
+    console.log(this.formGroup.value);
+
+    this.linkAtivo = true;
+  }
+  selImg(event: Event) {
+    const fileInput = event.target as HTMLInputElement;
+
+    if (fileInput.files && fileInput.files.length > 0) {
+      const imagem = fileInput.files[0];
+
+      if (imagem) {
+        this.pic = URL.createObjectURL(imagem);
+        this.formGroup.patchValue({ pic: this.pic });
+      } else {
+        console.error('Arquivo de imagem nulo.');
+      }
+    }
+  }
+
+  limparDados() {
+    let info = {
+      nome: '',
+      celular: '',
+      pic: null,
+    };
+
+    this.formGroup.setValue(info);
+
+    alert('Limpando dados');
+  }
 }
