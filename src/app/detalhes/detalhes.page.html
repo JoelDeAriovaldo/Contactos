@@ -7,11 +7,17 @@
 <ion-content class="full-screen-content">
   <ion-list *ngIf="dadosSalvos.length > 0">
     <ion-item *ngFor="let dado of dadosSalvos">
-      <ion-img src="{{ dado.pic }} "></ion-img>
-      <h1>Nome: {{ dado.nome }}</h1>
-      <h1>Celular: {{ dado.celular }}</h1>
+      <ion-avatar aria-hidden="true" slot="start">
+        <img alt="" src="{{ dado.pic }}" />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ dado.nome }}</h2>
+        <br />
+        <h3>{{ dado.celular }}</h3>
+      </ion-label>
+      <ion-label></ion-label>
     </ion-item>
+    <div *ngIf="dadosSalvos.length === 0">Nenhum dado salvo.</div>
   </ion-list>
-  <div *ngIf="dadosSalvos.length === 0">Nenhum dado salvo.</div>
   <ion-button color="tertiary" (click)="voltar()">Home</ion-button>
 </ion-content>

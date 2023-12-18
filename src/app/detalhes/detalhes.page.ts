@@ -12,7 +12,6 @@ export class DetalhesPage implements OnInit {
   constructor(public storage: StorageService, private router: Router) {}
   ngOnInit(): void {
     this.dadosSalvos = history.state.dadosSalvos || [];
-    throw new Error('Method not implemented.');
   }
 
   voltar(): void {
