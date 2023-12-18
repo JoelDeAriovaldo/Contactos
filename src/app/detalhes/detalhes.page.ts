@@ -8,8 +8,10 @@ import { Router } from '@angular/router';
   styleUrls: ['./detalhes.page.scss'],
 })
 export class DetalhesPage implements OnInit {
+  dadosSalvos: any[] = [];
   constructor(public storage: StorageService, private router: Router) {}
   ngOnInit(): void {
+    this.dadosSalvos = history.state.dadosSalvos || [];
     throw new Error('Method not implemented.');
   }
 

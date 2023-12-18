@@ -42,12 +42,13 @@
 
     <ion-button
       [disabled]="formGroup.status !=='VALID'"
-      [routerLink]="['/detalhes']"
       color="success"
       type="submit"
       >Salvar</ion-button
     >
-    <ion-button color="danger">Cancelar</ion-button>
+    <ion-button color="danger" (click)="listarDadosSalvos()"
+      >Ver Dados</ion-button
+    >
     <ion-button color="dark" (click)="limparDados()">Limpar</ion-button>
   </form>
 </ion-content>

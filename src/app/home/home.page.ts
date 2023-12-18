@@ -12,6 +12,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -25,11 +26,14 @@ export class HomePage implements OnInit {
   pic: any;
   linkAtivo = false;
 
+  dadosSalvos: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private storage: StorageService,
     private renderer: Renderer2,
-    private el: ElementRef
+    private el: ElementRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -54,16 +58,12 @@ export class HomePage implements OnInit {
 
     if (this.formGroup.status === 'VALID') {
       this.linkAtivo = true;
+      this.dadosSalvos.push(info);
+      this.formGroup.reset();
+      this.pic = null;
     } else {
       alert('Preencha os campos obrigatórios!');
     }
-
-    this.storage.armazenarDados(info);
-
-    this.storage.FormGroup = info;
-    console.log(this.formGroup.value);
-
-    this.linkAtivo = true;
   }
 
   selImg(event: Event) {
@@ -83,6 +83,12 @@ export class HomePage implements OnInit {
         console.error('Arquivo de imagem nulo.');
       }
     }
+  }
+
+  listarDadosSalvos() {
+    this.router.navigate(['/detalhes'], {
+      state: { dadosSalvos: this.dadosSalvos },
+    });
   }
 
   limparDados() {
