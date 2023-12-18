@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  Renderer2,
+} from '@angular/core';
 import { StorageService } from '../storage-service.service';
 import {
   FormBuilder,
@@ -19,7 +25,12 @@ export class HomePage implements OnInit {
   pic: any;
   linkAtivo = false;
 
-  constructor(private fb: FormBuilder, private storage: StorageService) {}
+  constructor(
+    private fb: FormBuilder,
+    private storage: StorageService,
+    private renderer: Renderer2,
+    private el: ElementRef
+  ) {}
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -54,15 +65,20 @@ export class HomePage implements OnInit {
 
     this.linkAtivo = true;
   }
+
   selImg(event: Event) {
     const fileInput = event.target as HTMLInputElement;
 
     if (fileInput.files && fileInput.files.length > 0) {
-      const imagem = fileInput.files[0];
+      const imagem = fileInput?.files?.[0];
 
       if (imagem) {
         this.pic = URL.createObjectURL(imagem);
-        this.formGroup.patchValue({ pic: this.pic });
+        console.log(this.pic);
+        const picControl = this.formGroup.get('pic');
+        if (picControl) {
+          this.renderer.setProperty(picControl, 'value', this.pic);
+        }
       } else {
         console.error('Arquivo de imagem nulo.');
       }
