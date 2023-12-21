@@ -8,13 +8,21 @@ export class StorageService {
   FormGroup: any;
   key: any = 'cursoionic';
   private dadosSalvos: any[] = [];
+  static state: any;
 
   constructor() {}
-  armazenarDados(info: any) {
-    this.dadosSalvos.push(info);
+  async armazenarDados(info: any) {
+    await Preferences.set({
+      key: this.key,
+      value: JSON.stringify(info),
+    });
   }
 
-  obterDadosSalvos() {
+  async obterDadosSalvos() {
+    const dados = await Preferences.get({
+      key: this.key,
+    });
+    this.dadosSalvos.push(JSON.parse('' + dados.value));
     return this.dadosSalvos;
   }
 }

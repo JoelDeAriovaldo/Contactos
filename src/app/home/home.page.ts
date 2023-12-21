@@ -43,7 +43,6 @@ export class HomePage implements OnInit {
       celular: ['', Validators.required],
     });
   }
-
   onSubmit() {
     let info;
     let nome = this.formGroup.get('nome')?.value;
@@ -51,6 +50,7 @@ export class HomePage implements OnInit {
     let pic = this.formGroup.get('pic')?.value;
 
     info = {
+      id: this.dadosSalvos.length + 1,
       nome,
       celular,
       pic,
@@ -61,6 +61,7 @@ export class HomePage implements OnInit {
       this.dadosSalvos.push(info);
       this.formGroup.reset();
       this.pic = null;
+      this.storage.armazenarDados(info);
     } else {
       alert('Preencha os campos obrigatórios!');
     }
@@ -85,10 +86,20 @@ export class HomePage implements OnInit {
     }
   }
 
-  listarDadosSalvos() {
-    this.router.navigate(['/detalhes'], {
-      state: { dadosSalvos: this.dadosSalvos },
-    });
+  getDadosPorId(id: number) {
+    return this.dadosSalvos.find((dados) => dados.id === id);
+  }
+
+  verDadosPorId(id: number) {
+    const dadosSelecionados = this.getDadosPorId(id);
+
+    if (dadosSelecionados) {
+      this.router.navigate(['/detalhes'], {
+        state: { dadosSelecionados },
+      });
+    } else {
+      alert('Dados não encontrados para o ID fornecido');
+    }
   }
 
   limparDados() {
