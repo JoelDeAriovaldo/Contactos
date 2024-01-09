@@ -14,11 +14,13 @@
         <h2><b>{{ dado.nome }}</b></h2>
         <br />
         <h3>{{ dado.celular }}</h3>
-        <ion-button slot="end">
-          <ion-icon name="star" slot="end"></ion-icon>
-          End
-        </ion-button>
       </ion-label>
+      <ion-button slot="end">
+        <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
+      </ion-button>
+      <ion-button slot="end">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
       <ion-label></ion-label>
     </ion-item>
     <div *ngIf="dadosSalvos.length === 0">Nenhum dado salvo.</div>
