@@ -5,24 +5,28 @@ import { Preferences } from '@capacitor/preferences';
   providedIn: 'root',
 })
 export class StorageService {
-  FormGroup: any;
+  //FormGroup: any;
   key: any = 'cursoionic';
   private dadosSalvos: any[] = [];
-  static state: any;
+  //static state: any;
 
   constructor() {}
-  async armazenarDados(info: any) {
+  async armazenarDados(dadosSalvos: any) {
+    const arrayString = JSON.stringify(this.dadosSalvos); //Stringifica todo o array
     await Preferences.set({
       key: this.key,
-      value: JSON.stringify(info),
+      value: arrayString,
     });
   }
 
   async obterDadosSalvos() {
-    const dados = await Preferences.get({
+    const storedArrayString = await Preferences.get({
       key: this.key,
     });
-    this.dadosSalvos.push(JSON.parse('' + dados.value));
+    this.dadosSalvos = storedArrayString.value
+      ? JSON.parse(storedArrayString.value)
+      : [];
+    console.log(this.dadosSalvos); //Analisa a string recuperada ou inicializa um array vazio
     return this.dadosSalvos;
   }
 }
