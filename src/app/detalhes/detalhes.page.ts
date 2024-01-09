@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 })
 export class DetalhesPage implements OnInit {
   dadosSalvos: any[] = [];
+
   constructor(public storage: StorageService, private router: Router) {}
   async ngOnInit(): Promise<void> {
     this.dadosSalvos = await this.storage.obterDadosSalvos();

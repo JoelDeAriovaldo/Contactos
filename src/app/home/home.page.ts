@@ -42,6 +42,12 @@ export class HomePage implements OnInit {
       nome: ['', Validators.required],
       celular: ['', Validators.required],
     });
+
+    this.atualizarListaDeDados();
+  }
+
+  async atualizarListaDeDados() {
+    this.dadosSalvos = await this.storage.obterDadosSalvos();
   }
   onSubmit() {
     let info;
@@ -74,12 +80,19 @@ export class HomePage implements OnInit {
       const imagem = fileInput?.files?.[0];
 
       if (imagem) {
-        this.pic = URL.createObjectURL(imagem);
-        console.log(this.pic);
-        const picControl = this.formGroup.get('pic');
-        if (picControl) {
-          this.renderer.setProperty(picControl, 'value', this.pic);
-        }
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+          this.pic = reader.result as string;
+          console.log(this.pic);
+
+          const picControl = this.formGroup.get('pic');
+          if (picControl) {
+            this.renderer.setProperty(picControl, 'value', this.pic);
+          }
+        };
+
+        reader.readAsDataURL(imagem);
       } else {
         console.error('Arquivo de imagem nulo.');
       }
@@ -91,14 +104,18 @@ export class HomePage implements OnInit {
   }
 
   verDadosPorId(id: number) {
-    const dadosSelecionados = this.getDadosPorId(id);
+    if (this.dadosSalvos.length > 0) {
+      const dadosSelecionados = this.getDadosPorId(id);
 
-    if (dadosSelecionados) {
-      this.router.navigate(['/detalhes'], {
-        state: { dadosSelecionados },
-      });
+      if (dadosSelecionados) {
+        this.router.navigate(['/detalhes'], {
+          state: { dadosSelecionados },
+        });
+      } else {
+        alert('Dados não encontrados para o ID fornecido');
+      }
     } else {
-      alert('Dados não encontrados para o ID fornecido');
+      alert('Não há dados salvos para visualizar');
     }
   }
 
