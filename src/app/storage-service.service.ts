@@ -29,4 +29,19 @@ export class StorageService {
     console.log(this.dadosSalvos); //Analisa a string recuperada ou inicializa um array vazio
     return this.dadosSalvos;
   }
+
+  async atualizarDados(dados: any) {
+    // Encontrar o índice do dado a ser atualizado
+    const index = this.dadosSalvos.findIndex((d) => d.id === dados.id);
+
+    if (index !== -1) {
+      // Atualiza os dados no array
+      this.dadosSalvos[index] = dados;
+
+      // Armazena os dados atualizados
+      await this.armazenarDados(this.dadosSalvos);
+    } else {
+      console.error('Dado não encontrado para atualização');
+    }
+  }
 }
