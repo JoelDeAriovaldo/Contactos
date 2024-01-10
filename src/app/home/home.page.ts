@@ -1,3 +1,10 @@
+interface DadoSalvo {
+  id: number;
+  // Adicione outras propriedades, se houver
+  nome: string;
+  celular: string;
+  pic: string | null;
+}
 import {
   Component,
   ElementRef,
@@ -20,7 +27,7 @@ import { Router } from '@angular/router';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  formGroup: any = FormGroup;
+  formGroup: FormGroup;
   nome: any;
   celular: any;
   pic: any;
@@ -34,22 +41,30 @@ export class HomePage implements OnInit {
     private renderer: Renderer2,
     private el: ElementRef,
     private router: Router
-  ) {}
-
-  ngOnInit() {
+  ) {
     this.formGroup = this.fb.group({
       pic: [null],
       nome: ['', Validators.required],
       celular: ['', Validators.required],
     });
+  }
 
-    this.atualizarListaDeDados();
+  async ngOnInit() {
+    await this.atualizarListaDeDados();
   }
 
   async atualizarListaDeDados() {
-    this.dadosSalvos = await this.storage.obterDadosSalvos();
+    const dadosSalvos = await this.storage.obterDadosSalvos();
+
+    if (Array.isArray(dadosSalvos)) {
+      this.dadosSalvos = dadosSalvos;
+    } else {
+      console.error('Os dados salvos não são um array:', dadosSalvos);
+      this.dadosSalvos = [];
+    }
   }
-  onSubmit() {
+
+  async onSubmit() {
     let info;
     let nome = this.formGroup.get('nome')?.value;
     let celular = this.formGroup.get('celular')?.value;
@@ -64,13 +79,16 @@ export class HomePage implements OnInit {
 
     if (this.formGroup.status === 'VALID') {
       this.linkAtivo = true;
+      await this.atualizarListaDeDados();
       this.dadosSalvos.push(info);
+      await this.storage.armazenarDados(this.dadosSalvos); // Armazena o array atualizado
       this.formGroup.reset();
       this.pic = null;
-      this.storage.armazenarDados(info);
     } else {
       alert('Preencha os campos obrigatórios!');
     }
+
+    this.dadosSalvos = await this.storage.obterDadosSalvos(); // Atualiza o array após armazenamento
   }
 
   selImg(event: Event) {

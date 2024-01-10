@@ -1,3 +1,10 @@
+interface DadoSalvo {
+  id: number;
+  nome: string;
+  celular: string;
+  pic: string | null;
+}
+
 import { Injectable } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 
@@ -5,43 +12,51 @@ import { Preferences } from '@capacitor/preferences';
   providedIn: 'root',
 })
 export class StorageService {
-  //FormGroup: any;
-  key: any = 'cursoionic';
-  private dadosSalvos: any[] = [];
-  //static state: any;
+  private key: string = 'cursoionic';
+  private dadosSalvos: DadoSalvo[] = [];
 
   constructor() {}
-  async armazenarDados(dadosSalvos: any) {
-    const arrayString = JSON.stringify(this.dadosSalvos); //Stringifica todo o array
-    await Preferences.set({
-      key: this.key,
-      value: arrayString,
-    });
+
+  async armazenarDados(dadosSalvos: DadoSalvo[]) {
+    try {
+      const arrayString = JSON.stringify(dadosSalvos);
+      await Preferences.set({
+        key: this.key,
+        value: arrayString,
+      });
+    } catch (error) {
+      console.error('Erro ao armazenar dados:', error);
+    }
   }
 
   async obterDadosSalvos() {
-    const storedArrayString = await Preferences.get({
-      key: this.key,
-    });
-    this.dadosSalvos = storedArrayString.value
-      ? JSON.parse(storedArrayString.value)
-      : [];
-    console.log(this.dadosSalvos); //Analisa a string recuperada ou inicializa um array vazio
-    return this.dadosSalvos;
+    try {
+      const storedArrayString = await Preferences.get({
+        key: this.key,
+      });
+      this.dadosSalvos = storedArrayString.value
+        ? JSON.parse(storedArrayString.value)
+        : [];
+      console.log('Dados salvos:', this.dadosSalvos);
+      return this.dadosSalvos;
+    } catch (error) {
+      console.error('Erro ao obter dados salvos:', error);
+      return [];
+    }
   }
 
-  async atualizarDados(dados: any) {
-    // Encontrar o índice do dado a ser atualizado
-    const index = this.dadosSalvos.findIndex((d) => d.id === dados.id);
+  async atualizarDados(dados: DadoSalvo) {
+    try {
+      const index = this.dadosSalvos.findIndex((d) => d.id === dados.id);
 
-    if (index !== -1) {
-      // Atualiza os dados no array
-      this.dadosSalvos[index] = dados;
-
-      // Armazena os dados atualizados
-      await this.armazenarDados(this.dadosSalvos);
-    } else {
-      console.error('Dado não encontrado para atualização');
+      if (index !== -1) {
+        this.dadosSalvos[index] = dados;
+        await this.armazenarDados(this.dadosSalvos);
+      } else {
+        console.error('Dado não encontrado para atualização');
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar dados:', error);
     }
   }
 }
