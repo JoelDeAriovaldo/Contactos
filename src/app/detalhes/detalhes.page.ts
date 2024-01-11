@@ -18,4 +18,15 @@ export class DetalhesPage implements OnInit {
   voltar(): void {
     window.location.href = '/home';
   }
+
+  editarDados(id: number): void {
+    const index = this.dadosSalvos.indexOf(id);
+    console.log(id);
+  }
+
+  apagar(id: number) {
+    this.dadosSalvos = this.dadosSalvos.filter((item) => item.id !== id);
+    this.storage.armazenarDados(this.dadosSalvos);
+    console.log(this.dadosSalvos, id);
+  }
 }
