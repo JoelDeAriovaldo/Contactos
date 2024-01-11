@@ -117,24 +117,8 @@ export class HomePage implements OnInit {
     }
   }
 
-  getDadosPorId(id: number) {
-    return this.dadosSalvos.find((dados) => dados.id === id);
-  }
-
-  verDadosPorId(id: number) {
-    if (this.dadosSalvos.length > 0) {
-      const dadosSelecionados = this.getDadosPorId(id);
-
-      if (dadosSelecionados) {
-        this.router.navigate(['/detalhes'], {
-          state: { dadosSelecionados },
-        });
-      } else {
-        alert('Dados não encontrados para o ID fornecido');
-      }
-    } else {
-      alert('Não há dados salvos para visualizar');
-    }
+  verDadosPorId() {
+    this.router.navigate(['/detalhes'], {});
   }
 
   limparDados() {
