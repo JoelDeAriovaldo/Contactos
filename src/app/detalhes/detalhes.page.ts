@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { StorageService } from '../storage-service.service';
 import { Router } from '@angular/router';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-ver-dados',
@@ -11,7 +12,7 @@ export class DetalhesPage implements OnInit {
   dadosSalvos: any[] = [];
 
   constructor(public storage: StorageService, private router: Router) {}
-  async ngOnInit(): Promise<void> {
+  async ngOnInit() {
     this.dadosSalvos = await this.storage.obterDadosSalvos();
   }
 
