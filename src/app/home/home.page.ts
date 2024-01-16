@@ -143,8 +143,8 @@ export class HomePage implements OnInit {
     const index = this.dadosSalvos.findIndex((item) => item.id === id);
 
     if (index !== -1) {
-      this.formGroup.patchValue(this.dadosSalvos[index]);
       console.log(id);
+      this.formGroup.patchValue(this.dadosSalvos[index]);
     } else {
       console.log('id não encontrado');
     }

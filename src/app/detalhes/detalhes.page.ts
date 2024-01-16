@@ -25,8 +25,8 @@ export class DetalhesPage implements OnInit {
 
     if (index !== -1) {
       this.storage.valorP = { ...this.dadosSalvos[index] };
-      console.log(id);
       this.router.navigate(['/home'], { queryParams: { editId: id } });
+      console.log(index);
     } else {
       alert('Dado nap encontrado para edicao');
     }
