@@ -144,6 +144,7 @@ export class HomePage implements OnInit {
 
     if (index !== -1) {
       this.formGroup.patchValue(this.dadosSalvos[index]);
+      console.log(id);
     } else {
       console.log('id não encontrado');
     }
