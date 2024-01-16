@@ -50,7 +50,9 @@ export class HomePage implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log('Runnig App...');
+  }
 
   ionViewDidEnter() {
     if (this.storage.valorP) {
@@ -84,10 +86,9 @@ export class HomePage implements OnInit {
     };
 
     if (this.formGroup.status === 'VALID') {
-      this.linkAtivo = true;
       await this.editarDados(info.id);
       this.dadosSalvos.push(info);
-      await this.storage.armazenarDados(this.dadosSalvos);
+      await this.storage.armazenarDados(this.dadosSalvos); // Armazena o array atualizado
       this.formGroup.reset();
       this.pic = null;
     } else {
@@ -95,6 +96,7 @@ export class HomePage implements OnInit {
     }
 
     this.dadosSalvos = await this.storage.obterDadosSalvos(); // Atualiza o array após armazenamento
+    this.formGroup.reset();
   }
 
   selImg(event: Event) {
@@ -141,10 +143,14 @@ export class HomePage implements OnInit {
 
   async editarDados(id: number) {
     const index = this.dadosSalvos.findIndex((item) => item.id === id);
-
     if (index !== -1) {
-      console.log(id);
-      this.formGroup.patchValue(this.dadosSalvos[index]);
+      this.dadosSalvos[index] = {
+        id,
+        nome: this.formGroup.get('nome')?.value,
+        celular: this.formGroup.get('celular')?.value,
+        pic: this.formGroup.get('pic')?.value,
+      };
+      await this.storage.armazenarDados(this.dadosSalvos);
     } else {
       console.log('id não encontrado');
     }
