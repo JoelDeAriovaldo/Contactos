@@ -14,6 +14,7 @@ import { Preferences } from '@capacitor/preferences';
 export class StorageService {
   private key: string = 'cursoionic';
   private dadosSalvos: DadoSalvo[] = [];
+  public valorP: DadoSalvo | null = null;
 
   constructor() {}
 

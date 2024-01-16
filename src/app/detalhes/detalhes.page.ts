@@ -21,8 +21,15 @@ export class DetalhesPage implements OnInit {
   }
 
   editarDados(id: number): void {
-    const index = this.dadosSalvos.indexOf(id);
-    console.log(id);
+    const index = this.dadosSalvos.findIndex((item) => item.id === id);
+
+    if (index !== -1) {
+      this.storage.valorP = { ...this.dadosSalvos[index] };
+
+      this.router.navigate(['/home'], { queryParams: { editId: id } });
+    } else {
+      alert('Dado nap encontrado para edicao');
+    }
   }
 
   apagar(id: number) {

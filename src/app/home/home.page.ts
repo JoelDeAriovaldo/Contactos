@@ -20,6 +20,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -49,8 +50,13 @@ export class HomePage implements OnInit {
     });
   }
 
-  async ngOnInit() {
-    await this.atualizarListaDeDados();
+  async ngOnInit(): Promise<void> {
+    // await this.editarDados();
+
+    if (this.storage.valorP) {
+      console.log(this.storage.valorP);
+      this.formGroup.patchValue(this.storage.valorP);
+    }
   }
 
   async atualizarListaDeDados() {
@@ -79,9 +85,9 @@ export class HomePage implements OnInit {
 
     if (this.formGroup.status === 'VALID') {
       this.linkAtivo = true;
-      await this.atualizarListaDeDados();
+      await this.editarDados(info.id);
       this.dadosSalvos.push(info);
-      await this.storage.armazenarDados(this.dadosSalvos); // Armazena o array atualizado
+      await this.storage.armazenarDados(this.dadosSalvos);
       this.formGroup.reset();
       this.pic = null;
     } else {
@@ -131,5 +137,15 @@ export class HomePage implements OnInit {
     this.formGroup.setValue(info);
 
     alert('Limpando dados');
+  }
+
+  async editarDados(id: number) {
+    const index = this.dadosSalvos.findIndex((item) => item.id === id);
+
+    if (index !== -1) {
+      this.formGroup.patchValue(this.dadosSalvos[index]);
+    } else {
+      console.log('id não encontrado');
+    }
   }
 }
