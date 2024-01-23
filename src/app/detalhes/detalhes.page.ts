@@ -16,11 +16,14 @@ export class DetalhesPage implements OnInit {
     this.dadosSalvos = await this.storage.obterDadosSalvos();
   }
 
+  async ionViewWilEnter() {
+    this.dadosSalvos = await this.storage.obterDadosSalvos();
+  }
   voltar(): void {
     window.location.href = '/home';
   }
 
-  editarDados(id: number): void {
+  editarDados(id: string): void {
     const index = this.dadosSalvos.findIndex((item) => item.id === id);
 
     if (index !== -1) {

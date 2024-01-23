@@ -33,6 +33,8 @@ export class HomePage implements OnInit {
   celular: any;
   pic: any;
   linkAtivo = false;
+  editID: any;
+  edit = false;
 
   dadosSalvos: any[] = [];
 
@@ -70,8 +72,12 @@ export class HomePage implements OnInit {
 
   ionViewDidEnter() {
     if (this.storage.valorP) {
+      this.edit = true;
+      this.editID = this.storage.valorP.id;
       console.log(this.storage.valorP);
       this.formGroup.patchValue(this.storage.valorP);
+    } else {
+      this.edit = false;
     }
   }
 
@@ -92,27 +98,32 @@ export class HomePage implements OnInit {
       const celular = this.formGroup.get('celular')?.value;
       const pic = this.formGroup.get('pic')?.value;
 
-      const novoDado: DadoSalvo = {
-        id: uuidv4(),
+      let novoDado: DadoSalvo = {
+        id: this.edit ? this.editID : Date.now().toString(),
         nome,
         celular,
         pic,
       };
-
-      const index = this.dadosSalvos.findIndex(
+      console.log(this.edit, this.editID);
+      const idExistente = this.dadosSalvos.find(
         (item) => item.id === novoDado.id
       );
 
-      if (index !== -1) {
-        console.log('ID já existe.');
+      if (idExistente) {
+        // Atualiza o item existente
+        Object.assign(idExistente, novoDado);
+        console.log('edicao', idExistente);
       } else {
+        // Adiciona um novo item
         this.dadosSalvos.push(novoDado);
-        await this.storage.armazenarDados(this.dadosSalvos);
-        console.log('Dados salvos:', this.dadosSalvos);
-
-        this.formGroup.reset();
-        this.pic = null;
+        console.log('novo dado', novoDado);
       }
+
+      await this.storage.armazenarDados(this.dadosSalvos);
+      console.log('Dados salvos:', this.dadosSalvos);
+
+      this.formGroup.reset();
+      this.pic = null;
     } else {
       alert('Preencha os campos obrigatórios!');
     }
@@ -161,11 +172,14 @@ export class HomePage implements OnInit {
   }
 
   async editarDados(id: string) {
+    alert('editar dados');
     const index = this.dadosSalvos.findIndex((item) => item.id === id);
+    this.editID = id;
 
-    if (index !== -1) {
+    if (index != this.editID) {
       // Define os valores do formulário com os valores do item a ser editado
       this.formGroup.patchValue(this.dadosSalvos[index]);
+      this.edit = true;
     } else {
       console.log('ID não encontrado');
     }
