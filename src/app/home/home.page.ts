@@ -1,6 +1,5 @@
 interface DadoSalvo {
-  id: number;
-  // Adicione outras propriedades, se houver
+  id: string;
   nome: string;
   celular: string;
   pic: string | null;
@@ -21,6 +20,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NavigationExtras } from '@angular/router';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-home',
@@ -37,6 +37,7 @@ export class HomePage implements OnInit {
   dadosSalvos: any[] = [];
 
   constructor(
+    private formBuilder: FormBuilder,
     private fb: FormBuilder,
     private storage: StorageService,
     private renderer: Renderer2,
@@ -50,8 +51,21 @@ export class HomePage implements OnInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     console.log('Runnig App...');
+    this.dadosSalvos = await this.storage.obterDadosSalvos();
+    this.formGroup = this.formBuilder.group({
+      nome: ['', [Validators.required]],
+      celular: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(11),
+          Validators.maxLength(11),
+        ],
+      ],
+      pic: ['', [Validators.required]],
+    });
   }
 
   ionViewDidEnter() {
@@ -73,30 +87,35 @@ export class HomePage implements OnInit {
   }
 
   async onSubmit() {
-    let info;
-    let nome = this.formGroup.get('nome')?.value;
-    let celular = this.formGroup.get('celular')?.value;
-    let pic = this.formGroup.get('pic')?.value;
-
-    info = {
-      id: this.dadosSalvos.length + 1,
-      nome,
-      celular,
-      pic,
-    };
-
     if (this.formGroup.status === 'VALID') {
-      await this.editarDados(info.id);
-      this.dadosSalvos.push(info);
-      await this.storage.armazenarDados(this.dadosSalvos); // Armazena o array atualizado
-      this.formGroup.reset();
-      this.pic = null;
+      const nome = this.formGroup.get('nome')?.value;
+      const celular = this.formGroup.get('celular')?.value;
+      const pic = this.formGroup.get('pic')?.value;
+
+      const novoDado: DadoSalvo = {
+        id: uuidv4(),
+        nome,
+        celular,
+        pic,
+      };
+
+      const index = this.dadosSalvos.findIndex(
+        (item) => item.id === novoDado.id
+      );
+
+      if (index !== -1) {
+        console.log('ID já existe.');
+      } else {
+        this.dadosSalvos.push(novoDado);
+        await this.storage.armazenarDados(this.dadosSalvos);
+        console.log('Dados salvos:', this.dadosSalvos);
+
+        this.formGroup.reset();
+        this.pic = null;
+      }
     } else {
       alert('Preencha os campos obrigatórios!');
     }
-
-    this.dadosSalvos = await this.storage.obterDadosSalvos(); // Atualiza o array após armazenamento
-    this.formGroup.reset();
   }
 
   selImg(event: Event) {
@@ -141,18 +160,14 @@ export class HomePage implements OnInit {
     alert('Limpando dados');
   }
 
-  async editarDados(id: number) {
+  async editarDados(id: string) {
     const index = this.dadosSalvos.findIndex((item) => item.id === id);
+
     if (index !== -1) {
-      this.dadosSalvos[index] = {
-        id,
-        nome: this.formGroup.get('nome')?.value,
-        celular: this.formGroup.get('celular')?.value,
-        pic: this.formGroup.get('pic')?.value,
-      };
-      await this.storage.armazenarDados(this.dadosSalvos);
+      // Define os valores do formulário com os valores do item a ser editado
+      this.formGroup.patchValue(this.dadosSalvos[index]);
     } else {
-      console.log('id não encontrado');
+      console.log('ID não encontrado');
     }
   }
 }
